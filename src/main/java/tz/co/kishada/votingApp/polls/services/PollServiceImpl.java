@@ -166,4 +166,25 @@ public class PollServiceImpl implements PollService {
         return pollRepository.findFirstByUuid(uuid);
     }
 
+    @Override
+    public ResponseEntity<?> deletePoll(String pollUid) {
+        logger.info("[Poll]: DeletePoll Poll at {} by {}", LocalDateTime.now(), loggedUser.getInfo().getEmail());
+        KishadaResponseWrapper<Poll> responseWrapper = new KishadaResponseWrapper<>();
+        try {
+            if (optionalPoll(pollUid).isPresent()) {
+                Poll poll = optionalPoll(pollUid).get();
+                poll.setDeleted(true);
+                poll.setActive(false);
+                pollRepository.save(poll);
+                responseWrapper.setItem(null);
+                return globalMethod.response(KishadaResponseCode.SUCCESS, "Completed successfully!", responseWrapper);
+            }
+            else return globalMethod.response(KishadaResponseCode.NO_RECORD_FOUND, "Poll couldn't be found!", responseWrapper);
+        } catch (Exception e) {
+            logger.error("Exception occurred on poll delete");
+            e.printStackTrace();
+            return  globalMethod.response(KishadaResponseCode.FAILURE, "Sorry execution failed!", responseWrapper);
+        }
+    }
+
 }

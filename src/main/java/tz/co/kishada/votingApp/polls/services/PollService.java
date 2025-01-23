@@ -26,4 +26,6 @@ public interface PollService {
     ResponseEntity<?> submitPoll(String pollUid);
 
     Optional<Poll> optionalPoll(String uuid);
+
+    ResponseEntity<?> deletePoll(String pollUid);
 }
