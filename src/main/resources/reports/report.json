@@ -1,0 +1,107 @@
+[
+  {
+    "name": "inquiry-report",
+    "title": "Advisory Inquiry Report",
+    "path": "inquiry-report",
+    "permission": "CAN_VIEW_INQUIRY_REPORT",
+    "parameters": [
+      {
+        "name": "region",
+        "label": "Region",
+        "type": "String",
+        "rank": "1",
+        "url": ""
+      },
+      {
+        "name": "council",
+        "label": "Council",
+        "type": "String",
+        "rank": "2",
+        "url": ""
+      },
+      {
+        "name": "wardName",
+        "label": "Ward Name",
+        "type": "String",
+        "rank": "3",
+        "url": ""
+      },
+      {
+        "name": "extensionOfficer",
+        "label": "Extension Officer",
+        "type": "String",
+        "rank": "4",
+        "url": ""
+      },
+      {
+      "name": "reviewedInquiry",
+      "label": "Reviewed Inquiry",
+      "type": "Integer",
+      "rank": "5",
+      "url": ""
+      },
+      {
+        "name": "pendingInquiry",
+        "label": "Pending Inquiry",
+        "type": "Integer",
+        "rank": "6",
+        "url": ""
+      },
+      {
+        "name": "totalInquiry",
+        "label": "Total Inquiry",
+        "type": "Integer",
+        "rank": "7",
+        "url": ""
+      }
+    ]
+  },
+
+  {
+    "name": "list-of-registered-vessels",
+    "title": "List of Registered of Vessels",
+    "path": "list-of-registered-vessels",
+    "permission": "CAN_VIEW_LIST_OF_REGISTERED_VESSELS",
+    "parameters": [{
+      "name": "startDate",
+      "label": "Start Date",
+      "type": "date",
+      "rank": "1",
+      "url": ""
+    },
+      {
+        "name": "endDate",
+        "label": "End Date",
+        "type": "date",
+        "rank": "2",
+        "url": ""
+      }
+    ]
+  }
+
+,
+
+  {
+    "name": "vessel-issued-licence",
+    "title": "List of Issued Fishing Vessels Licence",
+    "path": "vessel-issued-licence",
+    "permission": "CAN_VIEW_LIST_OF_ISSUED_FISHING_VESSELS_LICENCES",
+    "parameters": [{
+      "name": "startDate",
+      "label": "Start Date",
+      "type": "date",
+      "rank": "1",
+      "url": ""
+    },
+      {
+        "name": "endDate",
+        "label": "End Date",
+        "type": "date",
+        "rank": "2",
+        "url": ""
+      }
+    ]
+  }
+
+]
+
