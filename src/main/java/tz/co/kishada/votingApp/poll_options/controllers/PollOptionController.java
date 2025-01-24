@@ -33,4 +33,9 @@ public class PollOptionController {
     public ResponseEntity<?> getPollOptionByPoll(@PathVariable String pollUuid){
         return pollOptionService.getPollOptionByPoll(pollUuid);
     }
+
+    @DeleteMapping(value = "/uuid/{pollOptionUid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deletePollOption(@PathVariable String pollOptionUid){
+        return pollOptionService.deletePollOption(pollOptionUid);
+    }
 }

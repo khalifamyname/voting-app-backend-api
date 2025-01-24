@@ -23,4 +23,5 @@ public interface PollOptionService {
 
    List<PollOption> listPollOptionByPoll(Poll poll);
 
+   ResponseEntity<?> deletePollOption(String pollOptionUid);
 }

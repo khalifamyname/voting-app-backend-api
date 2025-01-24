@@ -150,4 +150,28 @@ public class PollOptionServiceImpl implements PollOptionService {
             return  new ArrayList<>();
         }
     }
+
+    @Override
+    public ResponseEntity<?> deletePollOption(String pollOptionUid) {
+        logger.info("[Poll]: deletePollOption at {} by {}", LocalDateTime.now(), loggedUser.getInfo().getEmail());
+        KishadaResponseWrapper<Poll> responseWrapper = new KishadaResponseWrapper<>();
+        try {
+            PollOption pollOption = new PollOption();
+            if (pollOptionUid != null) {
+                Optional<PollOption> optionalPollOption = pollOptionRepository.findFirstByUuid(pollOptionUid);
+                if (optionalPollOption.isPresent()) {
+                    pollOption = optionalPollOption.get();
+                    pollOption.setDeleted(true);
+                    pollOption.setActive(false);
+                    pollOptionRepository.save(pollOption);
+                    responseWrapper.setItem(null);
+                    return globalMethod.response(KishadaResponseCode.SUCCESS, "Completed successfully!", responseWrapper);
+                }   else return globalMethod.response(KishadaResponseCode.NO_RECORD_FOUND, "Selected poll option couldn't be found!", responseWrapper);
+            }   else return globalMethod.response(KishadaResponseCode.INVALID_REQUEST, "Null argument passed!", responseWrapper);
+        } catch (Exception e) {
+            logger.error("Exception occurred on poll option delete");
+            e.printStackTrace();
+            return  globalMethod.response(KishadaResponseCode.FAILURE, "Sorry execution failed!", responseWrapper);
+        }
+    }
 }
