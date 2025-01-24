@@ -7,7 +7,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import tz.co.kishada.votingApp.config.userextractor.LoggedUser;
 import tz.co.kishada.votingApp.entities.Poll;
+import tz.co.kishada.votingApp.entities.PollOption;
 import tz.co.kishada.votingApp.enums.PollStatus;
+import tz.co.kishada.votingApp.poll_options.services.PollOptionService;
 import tz.co.kishada.votingApp.polls.dtos.PollDto;
 import tz.co.kishada.votingApp.polls.repositories.PollRepository;
 import tz.co.kishada.votingApp.response.KishadaListResponseWrapper;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,6 +42,7 @@ public class PollServiceImpl implements PollService {
     private static final Logger logger = LoggerFactory.getLogger(PollServiceImpl.class);
 
     public final PollRepository pollRepository;
+    public final PollOptionService pollOptionService;
     public final GlobalMethod globalMethod;
     private final LoggedUser loggedUser;
 
@@ -123,7 +127,10 @@ public class PollServiceImpl implements PollService {
         KishadaResponseWrapper<Poll> responseWrapper = new KishadaResponseWrapper<>();
         try {
             if (optionalPoll(pollUid).isPresent()) {
-                responseWrapper.setItem(optionalPoll(pollUid).get());
+                Poll poll = optionalPoll(pollUid).get();
+                List<PollOption> pollOptions = pollOptionService.listPollOptionByPoll(poll);
+                poll.setOptions(pollOptions);
+                responseWrapper.setItem(poll);
                 return globalMethod.response(KishadaResponseCode.SUCCESS, "Completed successfully!", responseWrapper);
             }
             else return globalMethod.response(KishadaResponseCode.NO_RECORD_FOUND, "Poll couldn't be found!", responseWrapper);
@@ -232,6 +239,29 @@ public class PollServiceImpl implements PollService {
             else return globalMethod.response(KishadaResponseCode.NO_RECORD_FOUND, "Poll couldn't be found!", responseWrapper);
         } catch (Exception e) {
             logger.error("Exception occurred on poll activation");
+            e.printStackTrace();
+            return  globalMethod.response(KishadaResponseCode.FAILURE, "Sorry execution failed!", responseWrapper);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> publishPoll(String pollUid) {
+        logger.info("[Poll]: publishPoll Poll at {} by {}", LocalDateTime.now(), loggedUser.getInfo().getEmail());
+        KishadaResponseWrapper<Poll> responseWrapper = new KishadaResponseWrapper<>();
+        try {
+            if (optionalPoll(pollUid).isPresent()) {
+                Poll poll = optionalPoll(pollUid).get();
+                List<PollOption> pollOptions = pollOptionService.listPollOptionByPoll(poll);
+                if (poll.getActive() && !poll.getDeleted() && !pollOptions.isEmpty()) {
+                    poll.setPublished(true);
+                    poll.setPublishedAt(LocalDateTime.now());
+                    responseWrapper.setItem(pollRepository.save(poll));
+                    return globalMethod.response(KishadaResponseCode.SUCCESS, "Completed successfully!", responseWrapper);
+                }   else return globalMethod.response(KishadaResponseCode.RESTRICTED_ACCESS, "Poll cannot be published!", responseWrapper);
+            }
+            else return globalMethod.response(KishadaResponseCode.NO_RECORD_FOUND, "Poll couldn't be found!", responseWrapper);
+        } catch (Exception e) {
+            logger.error("Exception occurred on poll publish");
             e.printStackTrace();
             return  globalMethod.response(KishadaResponseCode.FAILURE, "Sorry execution failed!", responseWrapper);
         }

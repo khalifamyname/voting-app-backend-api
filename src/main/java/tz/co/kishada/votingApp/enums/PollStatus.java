@@ -11,4 +11,5 @@ package tz.co.kishada.votingApp.enums;
 public enum PollStatus {
     DRAFT,
     SUBMITTED,
+    PUBLISHED,
 }

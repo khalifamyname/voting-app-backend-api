@@ -13,12 +13,15 @@ import tz.co.kishada.votingApp.enums.PollStatus;
 import tz.co.kishada.votingApp.poll_options.dtos.PollOptionDto;
 import tz.co.kishada.votingApp.poll_options.repositories.PollOptionRepository;
 import tz.co.kishada.votingApp.polls.repositories.PollRepository;
+import tz.co.kishada.votingApp.response.KishadaListResponseWrapper;
 import tz.co.kishada.votingApp.response.KishadaResponseWrapper;
 import tz.co.kishada.votingApp.utils.GlobalMethod;
 import tz.co.kishada.votingApp.utils.KishadaHelper;
 import tz.co.kishada.votingApp.utils.KishadaResponseCode;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -88,6 +91,63 @@ public class PollOptionServiceImpl implements PollOptionService {
             statusCode = KishadaResponseCode.FAILURE;
             description = "Sorry, execution failed!";
             return  globalMethod.response(statusCode, description,responseWrapper);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getPollOptionByPoll(String pollUuid) {
+        logger.info("[Poll]: List Poll Option at {} by {}", LocalDateTime.now(), loggedUser.getInfo().getEmail());
+        KishadaListResponseWrapper responseWrapper = new KishadaListResponseWrapper();
+        Integer statusCode = KishadaResponseCode.SUCCESS;
+        String description = "Completed successfully";
+
+        try {
+
+            if (loggedUser.getInfo() == null) {
+                return globalMethod.response(KishadaResponseCode.INVALID_REQUEST, "User detail not found!",   responseWrapper);
+            }
+
+            Poll poll = new Poll();
+            if (pollUuid != null) {
+                Optional<Poll> optionalPoll = pollRepository.findFirstByUuid(pollUuid);
+                if (optionalPoll.isPresent()) {
+                    poll = optionalPoll.get();
+                }
+                else return globalMethod.response(KishadaResponseCode.NO_RECORD_FOUND, "Selected poll couldn't be found!", responseWrapper);
+            }
+
+            List<PollOption> pollOptions = pollOptionRepository.findAllByPoll(poll)
+                    .stream()
+                    .peek(pollOption -> pollOption.setPollUuid(pollUuid))
+                    .toList();
+
+            responseWrapper.setItemList(pollOptions);
+            return globalMethod.response(statusCode, description, responseWrapper);
+
+        }   catch (Exception e) {
+            logger.error("Exception occurred creating poll option");
+            e.printStackTrace();
+            statusCode = KishadaResponseCode.FAILURE;
+            description = "Sorry, execution failed!";
+            return  globalMethod.response(statusCode, description,responseWrapper);
+        }
+    }
+
+    @Override
+    public List<PollOption> listPollOptionByPoll(Poll poll) {
+        logger.info("[Poll]: List Poll Option at {} by {}", LocalDateTime.now(), loggedUser.getInfo().getEmail());
+
+        try {
+
+            List<PollOption> pollOptions = pollOptionRepository.findAllByPoll(poll)
+                    .stream()
+                    .peek(pollOption -> pollOption.setPollUuid(poll.getUuid()))
+                    .toList();
+            return pollOptions;
+        }   catch (Exception e) {
+            logger.error("Exception occurred creating poll option");
+            e.printStackTrace();
+            return  new ArrayList<>();
         }
     }
 }

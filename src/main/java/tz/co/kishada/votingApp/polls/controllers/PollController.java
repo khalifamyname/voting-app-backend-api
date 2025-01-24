@@ -61,6 +61,11 @@ public class PollController {
       return pollService.activatePoll(pollUid);
    }
 
+   @PutMapping(value = "/publish/{pollUid}", produces = MediaType.APPLICATION_JSON_VALUE)
+   public ResponseEntity<?> publishPoll(@PathVariable String pollUid){
+      return pollService.publishPoll(pollUid);
+   }
+
    @DeleteMapping(value = "/uuid/{pollUid}", produces = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<?> deletePoll(@PathVariable String pollUid){
       return pollService.deletePoll(pollUid);

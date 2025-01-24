@@ -32,4 +32,6 @@ public interface PollService {
     ResponseEntity<?> getAllPollList(Integer pageNo, Integer pageSize, String[] sortBy);
 
     ResponseEntity<?> activatePoll(String pollUid);
+
+    ResponseEntity<?> publishPoll(String pollUid);
 }

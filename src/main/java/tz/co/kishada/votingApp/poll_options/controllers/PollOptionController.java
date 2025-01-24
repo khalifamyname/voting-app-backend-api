@@ -4,10 +4,7 @@ package tz.co.kishada.votingApp.poll_options.controllers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tz.co.kishada.votingApp.poll_options.dtos.PollOptionDto;
 import tz.co.kishada.votingApp.poll_options.services.PollOptionService;
 import tz.co.kishada.votingApp.polls.dtos.PollDto;
@@ -30,5 +27,10 @@ public class PollOptionController {
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createPollOption(@RequestBody PollOptionDto pollOptionDto){
         return pollOptionService.createPollOption(pollOptionDto);
+    }
+
+    @GetMapping(value="/poll/{pollUuid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPollOptionByPoll(@PathVariable String pollUuid){
+        return pollOptionService.getPollOptionByPoll(pollUuid);
     }
 }

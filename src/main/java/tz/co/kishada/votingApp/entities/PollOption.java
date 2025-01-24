@@ -1,6 +1,7 @@
 package tz.co.kishada.votingApp.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +26,11 @@ public class PollOption extends BaseEntity {
     @Column(name = "title", unique = true)
     private String title;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "poll_id", referencedColumnName = "id")
     private Poll poll;
+
+    @Transient
+    String pollUuid;
 }
