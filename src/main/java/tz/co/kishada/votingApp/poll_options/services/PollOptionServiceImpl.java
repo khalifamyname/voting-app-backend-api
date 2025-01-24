@@ -116,7 +116,7 @@ public class PollOptionServiceImpl implements PollOptionService {
                 else return globalMethod.response(KishadaResponseCode.NO_RECORD_FOUND, "Selected poll couldn't be found!", responseWrapper);
             }
 
-            List<PollOption> pollOptions = pollOptionRepository.findAllByPoll(poll)
+            List<PollOption> pollOptions = pollOptionRepository.findAllByPoll_IdAndActiveTrueAndDeletedFalse(poll.getId())
                     .stream()
                     .peek(pollOption -> pollOption.setPollUuid(pollUuid))
                     .toList();
@@ -139,7 +139,7 @@ public class PollOptionServiceImpl implements PollOptionService {
 
         try {
 
-            List<PollOption> pollOptions = pollOptionRepository.findAllByPoll(poll)
+            List<PollOption> pollOptions = pollOptionRepository.findAllByPollAndActiveTrueAndDeletedFalse(poll)
                     .stream()
                     .peek(pollOption -> pollOption.setPollUuid(poll.getUuid()))
                     .toList();
