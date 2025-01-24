@@ -38,8 +38,8 @@ public class PollServiceImpl implements PollService {
 
     private static final Logger logger = LoggerFactory.getLogger(PollServiceImpl.class);
 
-    public final GlobalMethod globalMethod;
     public final PollRepository pollRepository;
+    public final GlobalMethod globalMethod;
     private final LoggedUser loggedUser;
 
     @Override
@@ -182,6 +182,56 @@ public class PollServiceImpl implements PollService {
             else return globalMethod.response(KishadaResponseCode.NO_RECORD_FOUND, "Poll couldn't be found!", responseWrapper);
         } catch (Exception e) {
             logger.error("Exception occurred on poll delete");
+            e.printStackTrace();
+            return  globalMethod.response(KishadaResponseCode.FAILURE, "Sorry execution failed!", responseWrapper);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getAllPollList(Integer pageNo, Integer pageSize, String[] sortBy) {
+        logger.info("[Poll]: Get All Polls at {} by {}", LocalDateTime.now(), loggedUser.getInfo().getEmail());
+        KishadaListResponseWrapper responseWrapper = new KishadaListResponseWrapper();
+        Integer statusCode = KishadaResponseCode.SUCCESS;
+        String description = "Successfully";
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(globalMethod.sortByParameter(sortBy)));
+        try {
+            Page<Poll> polls = pollRepository.findAll(pageable);
+            if (polls.isEmpty()){
+                statusCode = KishadaResponseCode.NO_RECORD_FOUND;
+                description = "Poll details not found!";
+                return globalMethod.response(statusCode, description, responseWrapper);
+            }
+            responseWrapper.setResponse(polls);
+            return  globalMethod.response(statusCode, description, responseWrapper);
+
+        }   catch (Exception e){
+            logger.error("Error in listing all polls: {}{}", e);
+            statusCode = KishadaResponseCode.FAILURE;
+            description = "Failed!";
+            return globalMethod.response(statusCode, description, responseWrapper);
+
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> activatePoll(String pollUid) {
+        logger.info("[Poll]: activatePoll Poll at {} by {}", LocalDateTime.now(), loggedUser.getInfo().getEmail());
+        KishadaResponseWrapper<Poll> responseWrapper = new KishadaResponseWrapper<>();
+        try {
+            if (optionalPoll(pollUid).isPresent()) {
+                Poll poll = optionalPoll(pollUid).get();
+                if (!poll.getActive())
+                    poll.setActive(true);
+
+                if (!poll.getDeleted())
+                    poll.setDeleted(false);
+
+                responseWrapper.setItem(pollRepository.save(poll));
+                return globalMethod.response(KishadaResponseCode.SUCCESS, "Completed successfully!", responseWrapper);
+            }
+            else return globalMethod.response(KishadaResponseCode.NO_RECORD_FOUND, "Poll couldn't be found!", responseWrapper);
+        } catch (Exception e) {
+            logger.error("Exception occurred on poll activation");
             e.printStackTrace();
             return  globalMethod.response(KishadaResponseCode.FAILURE, "Sorry execution failed!", responseWrapper);
         }

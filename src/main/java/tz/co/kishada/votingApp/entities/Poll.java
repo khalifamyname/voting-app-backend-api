@@ -1,13 +1,16 @@
 package tz.co.kishada.votingApp.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Where;
 import tz.co.kishada.votingApp.enums.PollStatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,4 +40,9 @@ public class Poll extends BaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PollOption> options = new ArrayList<>();
+
+    @Column(name = "published_at")
+    private LocalDateTime publishedAt;
+
+    private Boolean published = false;
 }

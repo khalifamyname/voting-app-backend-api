@@ -37,6 +37,15 @@ public class PollController {
       return pollService.getPollList(pageNo, pageSize, sortBy);
    }
 
+   @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
+   public ResponseEntity<?> getAllPollList(
+           @RequestParam(defaultValue = "0") Integer pageNo,
+           @RequestParam(defaultValue = "10") Integer pageSize,
+           @RequestParam(defaultValue = "createdAt, desc") String[]sortBy
+   ){
+      return pollService.getAllPollList(pageNo, pageSize, sortBy);
+   }
+
    @GetMapping(value = "/uuid/{pollUid}", produces = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<?> findPoll(@PathVariable String pollUid){
       return pollService.findPoll(pollUid);
@@ -45,6 +54,11 @@ public class PollController {
    @PutMapping(value = "/submit/{pollUid}", produces = MediaType.APPLICATION_JSON_VALUE)
    public ResponseEntity<?> submitPoll(@PathVariable String pollUid){
       return pollService.submitPoll(pollUid);
+   }
+
+   @PutMapping(value = "/activate/{pollUid}", produces = MediaType.APPLICATION_JSON_VALUE)
+   public ResponseEntity<?> activatePoll(@PathVariable String pollUid){
+      return pollService.activatePoll(pollUid);
    }
 
    @DeleteMapping(value = "/uuid/{pollUid}", produces = MediaType.APPLICATION_JSON_VALUE)

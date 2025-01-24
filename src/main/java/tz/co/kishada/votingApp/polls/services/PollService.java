@@ -28,4 +28,8 @@ public interface PollService {
     Optional<Poll> optionalPoll(String uuid);
 
     ResponseEntity<?> deletePoll(String pollUid);
+
+    ResponseEntity<?> getAllPollList(Integer pageNo, Integer pageSize, String[] sortBy);
+
+    ResponseEntity<?> activatePoll(String pollUid);
 }
