@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Khalifa K. Twaha
  * @email khalifa.twaha@ega.go.tz
@@ -30,6 +33,10 @@ public class PollOption extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "poll_id", referencedColumnName = "id")
     private Poll poll;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Vote> votes = new ArrayList<>();
 
     @Transient
     String pollUuid;

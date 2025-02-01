@@ -41,6 +41,9 @@ public class Poll extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PollOption> options = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Vote> votes = new ArrayList<>();
+
     @Column(name = "published_at")
     private LocalDateTime publishedAt;
 
